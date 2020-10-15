@@ -2,11 +2,14 @@ import re
 import random
 from Dawkins_Weasel import startingString
 from Dawkins_Weasel import copiesString
+from Dawkins_Weasel import mutate
+from Dawkins_Weasel import mutateList
+from Dawkins_Weasel import evolution
 
 def test_CanCreateStringOfLength28():
     assert len(startingString()) == 28
 
-def test_GeneratedStringOnlyContainsCapitalLettersandSpaces():
+def test_GeneratedStringOnlyContainsCapitalLettersAndSpaces():
     regex = re.compile(r'[^A-Z ]')
     filtered = regex.search(startingString())
     if filtered:
@@ -26,7 +29,7 @@ def test_CanGenerateARandomString():
 
 # Alternative implementation of a test the checks if the string is generated randomly. This test does not have
 # the same issues that the above test has, however it is still a flawed test in that
-# there is a small chance that it will fail when it should have passed.
+# there is a chance that it will fail when it should have passed.
 def test_CanGenerateARandomStringSecondTest():
     string1 = startingString()
     string2 = startingString()
@@ -40,9 +43,30 @@ def test_CanMake100CopiesOfGeneratedString():
     copies = copiesString()
     assert all(i == copies[0] for i in copies)
 
-def test_CanMutateTheGeneratedString():
+# As with previous seeded test this seems like implementation over behaviour and also breaks the flow of TDD.
+def test_CanMutateAString():
     random.seed(100)
-    mutatedList = mutate()
-    assert mutatedList[1] == "string to be determined"
-    assert mutatedList[1] == "string to be determined"
-    assert mutatedList[1] == "string to be determined"
+    mutatedString = mutate('DNRRZYQSHWVDWKVBRXTL IOCYUPC')
+    assert mutatedString == "DNRRZYQSHWUDWKVBRXTL IOCYUPC"
+
+
+def test_MutatedStringIsOfCorrectLength():
+    mutatedString = mutate(startingString())
+    assert len(mutatedString) == 28
+
+# As with the similar test above there is some potential unreliability as it is possible that all
+# strings end up being mutated the same by pure chance.
+def test_MutatedListContainsElementsThatAreNotAllEqual():
+    originalList = copiesString()
+    mutatedList = mutateList(originalList)
+    assert not all(i == mutatedList[0] for i in mutatedList)
+
+# Under TDD if we only have this test we can just make this function return the required output directly,
+# but not sure how I can test this further. Flow of TDD broke down while creating the evolution() function.
+def test_CanMutateToTargetString():
+    assert evolution() == "METHINKS IT IS LIKE A WEASEL"
+
+
+
+
+
